@@ -1,6 +1,6 @@
 import os
 from datetime import date, timedelta
-from typing import List, Dict, Any
+from typing import Dict, Any
 import math
 
 import psycopg2
@@ -15,7 +15,6 @@ DB_PORT = int(os.getenv("DB_PORT", "5432"))
 DB_NAME = os.getenv("DB_NAME", "postgres")
 DB_USER = os.getenv("DB_USER", "grupo_6_2025")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "NubeMLOPS!")
-
 
 
 def get_connection():
@@ -49,11 +48,39 @@ def safe_float(value):
     return f
 
 
+# ---------------------------------------------------
+# Instancia de FastAPI
+# ---------------------------------------------------
 app = FastAPI(
     title="TP Final MLOps - Recomendaciones AdTech",
     description="API para servir recomendaciones desde la tabla 'recommendations' en RDS.",
     version="1.0.0",
 )
+
+
+# ---------------------------------------------------
+# Endpoints básicos: / y /health
+# ---------------------------------------------------
+@app.get("/")
+def root():
+    return {"status": "ok", "service": "mlops-tp-api"}
+
+
+@app.get("/health")
+def health():
+    # opcional: probar conexión a DB
+    try:
+        conn = get_connection()
+        conn.close()
+        db_status = "ok"
+    except Exception:
+        db_status = "error"
+
+    return {
+        "status": "ok",
+        "db_status": db_status,
+    }
+
 
 # ---------------------------------------------------
 # Endpoint 1: /recommendations/{adv}/{model}
