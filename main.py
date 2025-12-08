@@ -1,10 +1,11 @@
 import os
+import math
 from datetime import date, timedelta
 from typing import Dict, Any
-import math
 
 import psycopg2
 from fastapi import FastAPI, HTTPException
+
 
 # ---------------------------------------------------
 # Configuración de la base de datos RDS
@@ -44,7 +45,7 @@ def safe_float(value):
     except (TypeError, ValueError):
         return None
     if math.isnan(f) or math.isinf(f):
-        return None   # o 0.0 si preferís
+        return None
     return f
 
 
@@ -59,7 +60,7 @@ app = FastAPI(
 
 
 # ---------------------------------------------------
-# Endpoints básicos: / y /health
+# Endpoints básicos
 # ---------------------------------------------------
 @app.get("/")
 def root():
